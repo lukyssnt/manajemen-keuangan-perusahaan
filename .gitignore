@@ -1,0 +1,20 @@
+# Database Configuration (Personal credentials)
+config/koneksi.php
+
+# Uploaded Files
+uploads/
+!uploads/index.html
+
+# PHP system files
+.php_cs.cache
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+.gemini/
+.agent/

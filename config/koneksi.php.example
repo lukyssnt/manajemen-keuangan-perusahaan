@@ -1,0 +1,75 @@
+<?php
+// Config Database
+$db_host = "localhost";
+$db_user = "root";
+$db_pass = "";
+$db_name = "db_sikep";
+
+// Masking errors for production
+error_reporting(E_ALL);
+ini_set('display_errors', 1); // Set to 0 in real production
+
+$koneksi = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
+
+if (!$koneksi) {
+    die("Koneksi gagal. Silakan hubungi admin.");
+}
+
+// Start Session globally if not started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// CSRF Protection System
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+function check_csrf()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            die("Invalid CSRF Token. Permintaan ditolak.");
+        }
+    }
+}
+
+function check_csrf_get()
+{
+    if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("Invalid CSRF Token (GET). Akses ditolak.");
+    }
+}
+
+// Audit Log Helper
+function log_audit($action)
+{
+    global $koneksi;
+    $id_user = $_SESSION['id_user'] ?? 0;
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $sql = "INSERT INTO audit_log (id_user, action, ip_address) VALUES ('$id_user', '$action', '$ip')";
+    mysqli_query($koneksi, $sql);
+}
+
+// Formatting Helper
+function format_rupiah($angka)
+{
+    return 'Rp ' . number_format($angka, 0, ',', '.');
+}
+
+// Base URL Helper
+function base_url($path = '')
+{
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+    $host = $_SERVER['HTTP_HOST'];
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+
+    // If we are in 'config' or 'layout', we need to go up
+    if (strpos($scriptDir, 'config') !== false || strpos($scriptDir, 'layout') !== false) {
+        $scriptDir = dirname($scriptDir);
+    }
+
+    $baseUrl = rtrim("$protocol://$host" . $scriptDir, '/');
+    return $baseUrl . '/' . ltrim($path, '/');
+}
+?>
