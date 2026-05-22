@@ -45,9 +45,10 @@
         switch (msg) {
             case 'updated': text = 'Data berhasil diperbarui'; break;
             case 'added': text = 'Data berhasil disimpan'; break;
-            case 'deleted': text = 'Data berhasil dihapus'; icon = 'warning'; break;
+            case 'deleted': text = 'Data berhasil dihapus'; icon = 'success'; break;
             case 'error': text = 'Terjadi kesalahan sistem'; icon = 'error'; title = 'Ops!'; break;
             case 'error_saldo': text = 'Saldo tidak mencukupi!'; icon = 'error'; title = 'Gagal'; break;
+            case 'error_self': text = 'Tidak bisa menghapus akun sendiri!'; icon = 'error'; title = 'Gagal'; break;
             case 'promoted': text = 'Santri telah naik kelas'; break;
             case 'graduated': text = 'Santri telah diluluskan'; break;
             case 'paid': text = 'Pembayaran berhasil dikonfirmasi'; break;
@@ -58,6 +59,44 @@
             Toast.fire({ icon: icon, title: text });
         }
     }
+
+    // Initialize DataTables
+    $(document).ready(function() {
+        if ($('#dataTable').length > 0) {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json"
+                },
+                "pageLength": 10,
+                "responsive": true
+            });
+        }
+    });
+
+    // Mobile sidebar toggle
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const appSidebar = document.getElementById('appSidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    function toggleSidebar(forceOpen = null) {
+        if (!appSidebar || !mobileOverlay) return;
+        const shouldOpen = forceOpen === null ? !appSidebar.classList.contains('open') : forceOpen;
+        appSidebar.classList.toggle('open', shouldOpen);
+        mobileOverlay.classList.toggle('open', shouldOpen);
+        document.body.classList.toggle('overflow-hidden', shouldOpen);
+    }
+
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => toggleSidebar());
+    }
+
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', () => toggleSidebar(false));
+    }
+
+    document.querySelectorAll('#appSidebar a').forEach((link) => {
+        link.addEventListener('click', () => toggleSidebar(false));
+    });
 </script>
 </body>
 

@@ -50,16 +50,45 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 
 ?>
 
-<div class="mb-8 flex justify-between items-center animate-fade-in-up">
-    <div>
-        <h2 class="text-3xl font-bold text-gray-800">Selamat Datang, <?= $display_name ?>!</h2>
-        <p class="text-gray-500">Ringkasan keuangan <?= $sys['nama_aplikasi'] ?: 'pesantren' ?> hari ini.</p>
-    </div>
+<div class="mb-8 animate-fade-in-up">
+    <div class="bg-white/95 rounded-[28px] border border-white/80 shadow-soft overflow-hidden relative">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_left,rgba(45,212,191,0.12),transparent_24%)] pointer-events-none"></div>
+        <div class="relative p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+            <div class="max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold uppercase tracking-[0.22em] border border-emerald-100 mb-5">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                    Financial Overview
+                </div>
+                <h2 class="font-display text-3xl md:text-4xl text-slate-900 leading-tight">Selamat Datang, <?= $display_name ?>!</h2>
+                <p class="text-slate-500 mt-3 text-sm md:text-base leading-7">Ringkasan keuangan <?= $sys['nama_aplikasi'] ?: 'pesantren' ?> disajikan dalam tampilan yang lebih lega, bersih, dan nyaman dipakai setiap hari.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2">
+                        <i class="far fa-calendar-alt text-emerald-600"></i>
+                        <?= date('F Y') ?>
+                    </div>
+                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2">
+                        <i class="fas fa-shield-heart text-teal-600"></i>
+                        Monitoring kas realtime
+                    </div>
+                </div>
+            </div>
 
-    <!-- Date/Period Display (Optional) -->
-    <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 text-sm font-medium text-gray-600">
-        <i class="far fa-calendar-alt mr-2"></i>
-        <?= date('F Y') ?>
+            <div class="grid grid-cols-2 gap-4 min-w-full sm:min-w-[340px] lg:min-w-[380px] lg:max-w-[420px]">
+                <div class="rounded-[24px] bg-slate-900 text-white p-5 shadow-panel">
+                    <div class="text-xs uppercase tracking-[0.2em] text-white/60">Saldo Saat Ini</div>
+                    <div class="mt-3 text-2xl font-display font-semibold">Rp <?= number_format($total_saldo, 0, ',', '.') ?></div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-emerald-200">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                        Stabil dan terpantau
+                    </div>
+                </div>
+                <div class="rounded-[24px] bg-gradient-to-br from-emerald-500 to-teal-500 text-white p-5 shadow-emerald">
+                    <div class="text-xs uppercase tracking-[0.2em] text-white/70">Periode</div>
+                    <div class="mt-3 text-2xl font-display font-semibold"><?= date('M Y') ?></div>
+                    <div class="mt-4 text-xs text-white/75">Pemantauan transaksi bulanan</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -67,16 +96,20 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <!-- Card 1: Total Saldo -->
     <div
-        class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl p-6 text-white shadow-lg relative overflow-hidden animate-fade-in-up stagger-1 hover-card">
-        <div class="absolute right-0 top-0 opacity-10 transform translate-x-2 -translate-y-2">
-            <i class="fas fa-wallet text-9xl"></i>
+        class="bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-500 rounded-[28px] p-7 text-white shadow-emerald relative overflow-hidden animate-fade-in-up stagger-1 hover-card border border-white/10">
+        <div class="absolute right-0 top-0 opacity-10 transform translate-x-3 -translate-y-3">
+            <i class="fas fa-wallet text-[7rem]"></i>
         </div>
+        <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/10 to-transparent"></div>
         <div class="relative z-10">
-            <p class="text-emerald-100 font-medium mb-1">Total Saldo Kas</p>
-            <h3 class="text-3xl font-bold">Rp
+            <div class="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-5">
+                <i class="fas fa-sack-dollar text-lg"></i>
+            </div>
+            <p class="text-emerald-50/85 font-medium mb-2 text-sm uppercase tracking-[0.2em]">Total Saldo Kas</p>
+            <h3 class="font-display text-3xl md:text-[2rem] font-semibold">Rp
                 <?= number_format($total_saldo, 0, ',', '.') ?>
             </h3>
-            <p class="text-xs text-emerald-100 mt-2 opacity-80">
+            <p class="text-sm text-emerald-50/85 mt-3 leading-6">
                 <?php if ($role == 'super_admin')
                     echo "Gabungan Putra & Putri";
                 else
@@ -87,35 +120,49 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 
     <!-- Card 2: Pemasukan Bulan Ini -->
     <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center justify-between animate-fade-in-up stagger-2 hover-card">
-        <div>
-            <p class="text-gray-500 font-medium text-sm mb-1">Pemasukan (Bulan Ini)</p>
-            <h3 class="text-2xl font-bold text-gray-800">Rp
+        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between animate-fade-in-up stagger-2 hover-card">
+        <div class="pr-4">
+            <div class="h-12 w-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-5 shadow-inner">
+                <i class="fas fa-arrow-down-long rotate-180 text-lg"></i>
+            </div>
+            <p class="text-slate-500 font-medium text-sm mb-2 uppercase tracking-[0.18em]">Pemasukan</p>
+            <h3 class="font-display text-2xl md:text-[1.8rem] font-semibold text-slate-900">Rp
                 <?= number_format($total_masuk, 0, ',', '.') ?>
             </h3>
-            <p class="text-xs text-emerald-500 mt-1 font-medium">
-                <i class="fas fa-arrow-up"></i> Income
+            <p class="text-sm text-emerald-600 mt-3 font-medium">
+                <i class="fas fa-arrow-trend-up mr-1"></i> Income bulan ini
             </p>
         </div>
-        <div class="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
-            <i class="fas fa-arrow-down transform rotate-180"></i>
+        <div class="hidden sm:block text-right">
+            <div class="text-xs uppercase tracking-[0.18em] text-slate-400 mb-2">Status</div>
+            <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-xs font-semibold">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                Positif
+            </div>
         </div>
     </div>
 
     <!-- Card 3: Pengeluaran Bulan Ini -->
     <div
-        class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 flex items-center justify-between animate-fade-in-up stagger-3 hover-card">
-        <div>
-            <p class="text-gray-500 font-medium text-sm mb-1">Pengeluaran (Bulan Ini)</p>
-            <h3 class="text-2xl font-bold text-gray-800">Rp
+        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between animate-fade-in-up stagger-3 hover-card">
+        <div class="pr-4">
+            <div class="h-12 w-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 mb-5 shadow-inner">
+                <i class="fas fa-arrow-up-long rotate-45 text-lg"></i>
+            </div>
+            <p class="text-slate-500 font-medium text-sm mb-2 uppercase tracking-[0.18em]">Pengeluaran</p>
+            <h3 class="font-display text-2xl md:text-[1.8rem] font-semibold text-slate-900">Rp
                 <?= number_format($total_keluar, 0, ',', '.') ?>
             </h3>
-            <p class="text-xs text-red-500 mt-1 font-medium">
-                <i class="fas fa-arrow-down"></i> Expense
+            <p class="text-sm text-rose-600 mt-3 font-medium">
+                <i class="fas fa-arrow-trend-down mr-1"></i> Expense bulan ini
             </p>
         </div>
-        <div class="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center text-red-600">
-            <i class="fas fa-arrow-up transform rotate-45"></i>
+        <div class="hidden sm:block text-right">
+            <div class="text-xs uppercase tracking-[0.18em] text-slate-400 mb-2">Status</div>
+            <div class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-rose-50 text-rose-700 border border-rose-100 text-xs font-semibold">
+                <span class="h-2 w-2 rounded-full bg-rose-500"></span>
+                Terkendali
+            </div>
         </div>
     </div>
 </div>
@@ -123,16 +170,33 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 <!-- Charts & Recent Transactions -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Chart Section (Simplified or Placeholder) -->
-    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-fade-in-up stagger-4">
-        <h3 class="font-bold text-lg text-gray-800 mb-4">Grafik Keuangan</h3>
+    <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80 animate-fade-in-up stagger-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div>
+                <h3 class="font-display font-semibold text-xl text-slate-900">Grafik Keuangan</h3>
+                <p class="text-sm text-slate-500 mt-1">Pergerakan pemasukan dan pengeluaran selama 6 bulan terakhir.</p>
+            </div>
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                Live trend
+            </div>
+        </div>
         <div class="relative h-64 w-full">
             <canvas id="financeChart"></canvas>
         </div>
     </div>
 
     <!-- Recent Transactions -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 animate-fade-in-up stagger-4">
-        <h3 class="font-bold text-lg text-gray-800 mb-4">Transaksi Terbaru</h3>
+    <div class="bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80 animate-fade-in-up stagger-4">
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div>
+                <h3 class="font-display font-semibold text-xl text-slate-900">Transaksi Terbaru</h3>
+                <p class="text-sm text-slate-500 mt-1">Lima aktivitas terakhir yang paling relevan.</p>
+            </div>
+            <div class="h-11 w-11 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500">
+                <i class="fas fa-clock-rotate-left"></i>
+            </div>
+        </div>
         <div class="space-y-4">
             <?php if (mysqli_num_rows($result_recent) > 0) {
                 while ($row = mysqli_fetch_assoc($result_recent)) {
@@ -143,16 +207,16 @@ $result_recent = mysqli_query($koneksi, $query_recent);
                     $sign = $is_masuk ? '+' : '-';
                     ?>
                     <div
-                        class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                        class="flex items-center justify-between p-4 hover:bg-slate-50 rounded-[22px] transition-colors cursor-pointer border border-transparent hover:border-slate-200">
                         <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 <?= $bg ?> rounded-full flex items-center justify-center">
+                            <div class="h-12 w-12 <?= $bg ?> rounded-2xl flex items-center justify-center shadow-inner">
                                 <i class="fas <?= $icon ?>"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-gray-800 line-clamp-1">
+                                <p class="text-sm font-semibold text-slate-800 line-clamp-1">
                                     <?= $row['keterangan'] ?>
                                 </p>
-                                <p class="text-xs text-gray-500">
+                                <p class="text-xs text-slate-500 mt-1">
                                     <?= date('d M Y', strtotime($row['tanggal'])) ?>
                                 </p>
                             </div>
@@ -163,7 +227,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
                                 <?= number_format($row['nominal'], 0, ',', '.') ?>
                             </p>
                             <?php if ($role == 'super_admin'): ?>
-                                <span class="text-[10px] uppercase px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full">
+                                <span class="text-[10px] uppercase px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full tracking-[0.16em]">
                                     <?= $row['nama_unit'] ?>
                                 </span>
                             <?php endif; ?>
@@ -171,11 +235,11 @@ $result_recent = mysqli_query($koneksi, $query_recent);
                     </div>
                 <?php }
             } else { ?>
-                <div class="text-center text-gray-400 py-8">Belum ada transaksi</div>
+                <div class="text-center text-slate-400 py-8">Belum ada transaksi</div>
             <?php } ?>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100 text-center">
-            <a href="transaksi.php" class="text-sm text-emerald-600 font-medium hover:text-emerald-700">Lihat Semua
+        <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+            <a href="transaksi.php" class="text-sm text-emerald-600 font-semibold hover:text-emerald-700">Lihat Semua
                 Transaksi &rarr;</a>
         </div>
     </div>
