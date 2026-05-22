@@ -23,7 +23,7 @@ $result = mysqli_query($koneksi, $query);
 include 'layout/header.php';
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
     <div>
         <h2 class="text-3xl font-bold text-gray-800">Log Aktivitas Sistem</h2>
         <p class="text-gray-500 text-sm">Rekaman aktivitas pengguna untuk keamanan dan audit.</p>
@@ -40,7 +40,7 @@ include 'layout/header.php';
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in-up stagger-1">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>

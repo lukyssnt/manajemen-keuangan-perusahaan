@@ -96,7 +96,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <!-- Card 1: Total Saldo -->
     <div
-        class="bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-500 rounded-[28px] p-7 text-white shadow-emerald relative overflow-hidden animate-fade-in-up stagger-1 hover-card border border-white/10">
+        class="bg-gradient-to-br from-emerald-500 via-emerald-500 to-teal-500 rounded-[28px] p-7 text-white shadow-emerald relative overflow-hidden hover-card border border-white/10">
         <div class="absolute right-0 top-0 opacity-10 transform translate-x-3 -translate-y-3">
             <i class="fas fa-wallet text-[7rem]"></i>
         </div>
@@ -120,7 +120,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 
     <!-- Card 2: Pemasukan Bulan Ini -->
     <div
-        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between animate-fade-in-up stagger-2 hover-card">
+        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between hover-card">
         <div class="pr-4">
             <div class="h-12 w-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-5 shadow-inner">
                 <i class="fas fa-arrow-down-long rotate-180 text-lg"></i>
@@ -144,7 +144,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 
     <!-- Card 3: Pengeluaran Bulan Ini -->
     <div
-        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between animate-fade-in-up stagger-3 hover-card">
+        class="bg-white rounded-[28px] p-7 shadow-soft border border-white/80 flex items-start justify-between hover-card">
         <div class="pr-4">
             <div class="h-12 w-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 mb-5 shadow-inner">
                 <i class="fas fa-arrow-up-long rotate-45 text-lg"></i>
@@ -170,7 +170,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 <!-- Charts & Recent Transactions -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Chart Section (Simplified or Placeholder) -->
-    <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80 animate-fade-in-up stagger-4">
+    <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
                 <h3 class="font-display font-semibold text-xl text-slate-900">Grafik Keuangan</h3>
@@ -187,7 +187,7 @@ $result_recent = mysqli_query($koneksi, $query_recent);
     </div>
 
     <!-- Recent Transactions -->
-    <div class="bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80 animate-fade-in-up stagger-4">
+    <div class="bg-white p-6 md:p-8 rounded-[28px] shadow-soft border border-white/80">
         <div class="flex items-start justify-between gap-4 mb-6">
             <div>
                 <h3 class="font-display font-semibold text-xl text-slate-900">Transaksi Terbaru</h3>

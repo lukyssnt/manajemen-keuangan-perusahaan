@@ -59,7 +59,7 @@ $query = "SELECT s.*, u.nama_unit
 $result = mysqli_query($koneksi, $query);
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
     <h2 class="text-3xl font-bold text-gray-800">Data Santri</h2>
 
     <div class="flex gap-2 w-full md:w-auto">
@@ -92,7 +92,7 @@ $result = mysqli_query($koneksi, $query);
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in-up stagger-1">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>

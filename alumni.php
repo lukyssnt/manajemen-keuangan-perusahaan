@@ -29,7 +29,7 @@ $query = "SELECT s.*, u.nama_unit,
 $result = mysqli_query($koneksi, $query);
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
     <div>
         <h2 class="text-3xl font-bold text-gray-800">Data dan Tagihan Alumni</h2>
         <p class="text-gray-500 text-sm">Santri yang sudah lulus dan sisa tagihannya.</p>

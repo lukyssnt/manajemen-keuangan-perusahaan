@@ -30,20 +30,20 @@ if (isset($_GET['delete'])) {
 }
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
     <div>
         <h2 class="text-3xl font-bold text-gray-800">Manajemen User</h2>
         <p class="text-gray-500 text-sm mt-1">Kelola hak akses administrator dan bendahara unit.</p>
     </div>
     
     <div class="flex gap-2">
-        <a href="users_tambah.php" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl transition-all flex items-center shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 font-medium">
+        <a href="users_tambah.php" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl flex items-center shadow-lg font-medium">
             <i class="fas fa-plus mr-2"></i> Tambah User
         </a>
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden animate-fade-in-up stagger-1">
+<div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
     <div class="p-6">
         <table class="w-full text-left border-collapse" id="dataTable">
             <thead>
@@ -75,11 +75,11 @@ if (isset($_GET['delete'])) {
                     </td>
                     <td class="p-4 text-center">
                         <div class="flex justify-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                            <a href="users_edit.php?id=<?= $row['id'] ?>" class="text-blue-600 hover:text-white hover:bg-blue-600 bg-blue-50 p-2 rounded-lg h-9 w-9 flex items-center justify-center transition-all shadow-sm">
+                            <a href="users_edit.php?id=<?= $row['id'] ?>" class="text-blue-600 hover:text-white hover:bg-blue-600 bg-blue-50 p-2 rounded-lg h-9 w-9 flex items-center justify-center shadow-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <?php if ($row['id'] != $_SESSION['id_user']): ?>
-                            <button onclick="confirmDelete('users.php?delete=<?= $row['id'] ?>')" class="text-red-600 hover:text-white hover:bg-red-600 bg-red-50 p-2 rounded-lg h-9 w-9 flex items-center justify-center transition-all shadow-sm">
+                            <button onclick="confirmDelete('users.php?delete=<?= $row['id'] ?>')" class="text-red-600 hover:text-white hover:bg-red-600 bg-red-50 p-2 rounded-lg h-9 w-9 flex items-center justify-center shadow-sm">
                                 <i class="fas fa-trash"></i>
                             </button>
                             <?php endif; ?>

@@ -114,7 +114,7 @@ include 'layout/header.php';
         <form action="" method="post">
             <div class="flex justify-end items-center">
                 <button type="submit" name="sync"
-                    class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-all font-bold flex items-center gap-2 hover:-translate-y-0.5">
+                    class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md font-bold flex items-center gap-2">
                     <i class="fas fa-sync-alt"></i> Tarik Data Sekarang
                 </button>
             </div>

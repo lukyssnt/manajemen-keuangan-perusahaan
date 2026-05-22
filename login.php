@@ -97,7 +97,7 @@ if (isset($_POST['login'])) {
                 </div>
 
                 <button
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 transform hover:scale-105"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors shadow-md"
                     type="submit" name="login">
                     Masuk
                 </button>

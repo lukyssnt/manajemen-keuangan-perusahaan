@@ -98,7 +98,7 @@ $total_saldo = $total_masuk - $total_keluar; // Use calculated instead of table 
 include 'layout/header.php';
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-fade-in-up">
+<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
     <h2 class="text-3xl font-bold text-gray-800">Transaksi Kas</h2>
 
     <div class="flex gap-2 w-full md:w-auto">
@@ -119,7 +119,7 @@ include 'layout/header.php';
 <!-- Summary Widgets -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <div
-        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 animate-fade-in-up stagger-1 hover-card">
+        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover-card">
         <div class="bg-blue-50 p-4 rounded-lg text-blue-600">
             <i class="fas fa-wallet text-2xl"></i>
         </div>
@@ -129,7 +129,7 @@ include 'layout/header.php';
         </div>
     </div>
     <div
-        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 animate-fade-in-up stagger-2 hover-card">
+        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover-card">
         <div class="bg-emerald-50 p-4 rounded-lg text-emerald-600">
             <i class="fas fa-arrow-down text-2xl"></i>
         </div>
@@ -139,7 +139,7 @@ include 'layout/header.php';
         </div>
     </div>
     <div
-        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 animate-fade-in-up stagger-3 hover-card">
+        class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover-card">
         <div class="bg-red-50 p-4 rounded-lg text-red-600">
             <i class="fas fa-arrow-up text-2xl"></i>
         </div>
@@ -150,7 +150,7 @@ include 'layout/header.php';
     </div>
 </div>
 
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in-up stagger-4">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>

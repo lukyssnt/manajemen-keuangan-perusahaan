@@ -38,13 +38,13 @@ if (isset($_POST['submit'])) {
 include 'layout/header.php';
 ?>
 
-<div class="max-w-xl mx-auto animate-fade-in-up">
+<div class="max-w-xl mx-auto">
     <div class="mb-6">
         <h2 class="text-3xl font-bold text-gray-800">Edit Profil Saya</h2>
         <p class="text-gray-500">Kelola informasi akun Anda.</p>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 stagger-1">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
         <form action="" method="post">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="mb-4">

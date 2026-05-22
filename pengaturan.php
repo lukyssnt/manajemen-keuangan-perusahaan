@@ -53,7 +53,7 @@ include 'layout/header.php';
 ?>
 
 
-        <div class="max-w-2xl mx-auto animate-fade-in-up">
+        <div class="max-w-2xl mx-auto">
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h2 class="text-3xl font-bold text-gray-800">Pengaturan Website</h2>
@@ -61,7 +61,7 @@ include 'layout/header.php';
         </div>
         <div class="flex gap-3 items-center">
             <a href="database_backup.php" 
-               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all shadow-md flex items-center gap-2 text-sm font-bold">
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 text-sm font-bold">
                <i class="fas fa-database"></i> Backup DB
             </a>
             <?php if (!empty($settings['logo'])): ?>
@@ -71,7 +71,7 @@ include 'layout/header.php';
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8 stagger-1">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
         <form action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="mb-6">
@@ -90,7 +90,7 @@ include 'layout/header.php';
 
             <div class="flex justify-end">
                 <button type="submit" name="submit"
-                    class="px-10 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-all font-bold">
+                    class="px-10 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md font-bold">
                     Update Pengaturan
                 </button>
             </div>

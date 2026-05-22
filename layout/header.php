@@ -66,7 +66,6 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     
     <!-- jQuery & DataTables -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -108,6 +107,10 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             --slate-500: #64748b;
             --slate-700: #334155;
             --slate-900: #0f172a;
+            --motion-fast: 160ms;
+            --motion-base: 220ms;
+            --motion-slow: 320ms;
+            --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         body {
@@ -218,17 +221,21 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             position: relative;
             margin: 0 0.9rem;
             border-radius: 1.15rem;
-            transition: all 0.3s ease;
+            transition: background-color var(--motion-base) var(--motion-ease),
+                        color var(--motion-base) var(--motion-ease),
+                        transform var(--motion-base) var(--motion-ease),
+                        box-shadow var(--motion-base) var(--motion-ease);
         }
 
         .nav-item i {
-            transition: transform 0.3s ease, color 0.3s ease;
+            transition: transform var(--motion-base) var(--motion-ease),
+                        color var(--motion-base) var(--motion-ease);
             width: 1.35rem;
             text-align: center;
         }
 
         .nav-item:hover {
-            transform: translateX(5px);
+            transform: translateX(2px);
         }
 
         .nav-item.active {
@@ -287,7 +294,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         @keyframes fadeInUpCustom {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
 
             to {
@@ -297,33 +304,36 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         }
 
         .animate-fade-in-up {
-            animation: fadeInUpCustom 0.6s ease-out forwards;
+            animation: fadeInUpCustom var(--motion-slow) var(--motion-ease) forwards;
+            will-change: opacity, transform;
         }
 
         .stagger-1 {
-            animation-delay: 0.1s;
+            animation-delay: 0.02s;
         }
 
         .stagger-2 {
-            animation-delay: 0.2s;
+            animation-delay: 0.04s;
         }
 
         .stagger-3 {
-            animation-delay: 0.3s;
+            animation-delay: 0.06s;
         }
 
         .stagger-4 {
-            animation-delay: 0.4s;
+            animation-delay: 0.08s;
         }
 
         /* Card Hover Effect */
         .hover-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform var(--motion-base) var(--motion-ease),
+                        box-shadow var(--motion-base) var(--motion-ease),
+                        border-color var(--motion-base) var(--motion-ease);
         }
 
         .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+            box-shadow: 0 24px 42px -30px rgba(15, 23, 42, 0.2);
         }
 
         main {
@@ -336,15 +346,17 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             border-radius: 1.65rem !important;
             box-shadow: 0 24px 55px -34px rgba(15, 23, 42, 0.22);
             border-color: rgba(226, 232, 240, 0.95) !important;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            transition: transform var(--motion-base) var(--motion-ease),
+                        box-shadow var(--motion-base) var(--motion-ease),
+                        border-color var(--motion-base) var(--motion-ease);
             background: rgba(255, 255, 255, 0.96);
         }
 
         main .bg-white.rounded-xl:hover,
         main .bg-white.rounded-2xl:hover,
         main .bg-white.rounded-3xl:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 34px 70px -40px rgba(15, 23, 42, 0.26);
+            transform: translateY(-2px);
+            box-shadow: 0 28px 56px -38px rgba(15, 23, 42, 0.22);
         }
 
         main form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
@@ -353,7 +365,10 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             min-height: 3rem;
             border-radius: 1rem !important;
             border-color: #d1d5db !important;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+            transition: border-color var(--motion-fast) var(--motion-ease),
+                        box-shadow var(--motion-fast) var(--motion-ease),
+                        transform var(--motion-fast) var(--motion-ease),
+                        background-color var(--motion-fast) var(--motion-ease);
         }
 
         main form textarea {
@@ -365,7 +380,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         main form textarea:focus {
             border-color: #10b981 !important;
             box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12), 0 10px 30px -18px rgba(16, 185, 129, 0.65) !important;
-            transform: translateY(-1px);
+            transform: translateY(-0.5px);
             outline: none !important;
         }
 
@@ -379,14 +394,17 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         main form a[class*="bg-"],
         main .action-link,
         .logout-link {
-            transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+            transition: transform var(--motion-fast) var(--motion-ease),
+                        box-shadow var(--motion-fast) var(--motion-ease),
+                        background-color var(--motion-fast) var(--motion-ease),
+                        color var(--motion-fast) var(--motion-ease);
         }
 
         main form button:hover,
         main form a[class*="bg-"]:hover,
         main .action-link:hover,
         .logout-link:hover {
-            transform: translateY(-1px);
+            transform: translateY(-0.5px);
         }
 
         main form button[class*="bg-emerald"],
@@ -426,7 +444,8 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         }
 
         main table tbody tr {
-            transition: background-color 0.22s ease, transform 0.22s ease;
+            transition: background-color var(--motion-fast) var(--motion-ease),
+                        transform var(--motion-fast) var(--motion-ease);
         }
 
         main table tbody tr:hover {
@@ -475,7 +494,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 width: min(82vw, 20rem);
                 display: flex !important;
                 transform: translateX(-105%);
-                transition: transform 0.32s ease;
+                transition: transform var(--motion-slow) var(--motion-ease);
                 z-index: 50;
             }
 
@@ -490,7 +509,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 backdrop-filter: blur(6px);
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 0.28s ease;
+                transition: opacity var(--motion-base) var(--motion-ease);
                 z-index: 40;
             }
 
@@ -522,6 +541,25 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 justify-content: flex-start;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .hover-card:hover,
+            .nav-item:hover,
+            main .bg-white.rounded-xl:hover,
+            main .bg-white.rounded-2xl:hover,
+            main .bg-white.rounded-3xl:hover {
+                transform: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -530,7 +568,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
     <div class="flex h-screen overflow-hidden">
         <div id="mobileOverlay" class="mobile-overlay md:hidden"></div>
         <!-- Sidebar -->
-        <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl hidden md:flex flex-col z-10 transition-all duration-300">
+        <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl hidden md:flex flex-col z-10">
             <div class="h-24 flex items-center px-6 border-b border-gray-100">
                 <div class="flex items-center gap-3">
                     <?php if (!empty($sys['logo'])): ?>
