@@ -73,64 +73,170 @@
         }
     });
 
-    // Mobile sidebar toggle
+    // Mobile menu toggle
     const mobileMenuButton = document.getElementById('mobileMenuButton');
-    const appSidebar = document.getElementById('appSidebar');
-    const mobileOverlay = document.getElementById('mobileOverlay');
-    const sidebarCloseButton = document.getElementById('sidebarCloseButton');
+    const mobileMenuPanel = document.getElementById('mobileMenuPanel');
+    const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
+    const mobileMenuCloseButton = document.getElementById('mobileMenuCloseButton');
+    const mobileInstallButton = document.getElementById('mobileInstallButton');
+    const installBanner = document.getElementById('installBanner');
+    const installBannerButton = document.getElementById('installBannerButton');
+    const installBannerDismiss = document.getElementById('installBannerDismiss');
     const mobileMediaQuery = window.matchMedia('(max-width: 767px)');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    let deferredInstallPrompt = null;
 
-    function toggleSidebar(forceOpen = null) {
-        if (!appSidebar || !mobileOverlay) return;
-        const shouldOpen = forceOpen === null ? !appSidebar.classList.contains('open') : forceOpen;
-        appSidebar.classList.toggle('open', shouldOpen);
-        mobileOverlay.classList.toggle('open', shouldOpen);
+    function toggleMobileMenu(forceOpen = null) {
+        if (!mobileMenuPanel) return;
+        const shouldOpen = forceOpen === null ? !mobileMenuPanel.classList.contains('open') : forceOpen;
+        mobileMenuPanel.classList.toggle('open', shouldOpen);
         document.body.classList.toggle('overflow-hidden', shouldOpen);
-        appSidebar.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+        document.body.classList.toggle('sidebar-open', shouldOpen);
+        mobileMenuPanel.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
         if (mobileMenuButton) {
             mobileMenuButton.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
         }
     }
 
-    function syncSidebarState() {
+    function syncMobileMenuState() {
         if (!mobileMediaQuery.matches) {
-            appSidebar?.classList.remove('open');
-            mobileOverlay?.classList.remove('open');
+            mobileMenuPanel?.classList.remove('open');
             document.body.classList.remove('overflow-hidden');
-            appSidebar?.setAttribute('aria-hidden', 'false');
+            document.body.classList.remove('sidebar-open');
+            mobileMenuPanel?.setAttribute('aria-hidden', 'true');
             if (mobileMenuButton) {
                 mobileMenuButton.setAttribute('aria-expanded', 'false');
             }
             return;
         }
 
-        appSidebar?.setAttribute('aria-hidden', appSidebar.classList.contains('open') ? 'false' : 'true');
+        mobileMenuPanel?.setAttribute('aria-hidden', mobileMenuPanel.classList.contains('open') ? 'false' : 'true');
     }
 
     if (mobileMenuButton) {
         mobileMenuButton.setAttribute('aria-expanded', 'false');
-        mobileMenuButton.addEventListener('click', () => toggleSidebar());
+        mobileMenuButton.addEventListener('click', () => toggleMobileMenu());
     }
 
-    if (mobileOverlay) {
-        mobileOverlay.addEventListener('click', () => toggleSidebar(false));
+    if (mobileMenuBackdrop) {
+        mobileMenuBackdrop.addEventListener('click', () => toggleMobileMenu(false));
     }
 
-    if (sidebarCloseButton) {
-        sidebarCloseButton.addEventListener('click', () => toggleSidebar(false));
+    if (mobileMenuPanel) {
+        mobileMenuPanel.addEventListener('click', (event) => {
+            const surface = event.target.closest('.mobile-menu-surface');
+            if (!surface) {
+                toggleMobileMenu(false);
+                return;
+            }
+            event.stopPropagation();
+        });
     }
 
-    document.querySelectorAll('#appSidebar a').forEach((link) => {
-        link.addEventListener('click', () => toggleSidebar(false));
+    if (mobileMenuCloseButton) {
+        mobileMenuCloseButton.addEventListener('click', () => toggleMobileMenu(false));
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && mobileMenuPanel?.classList.contains('open')) {
+            toggleMobileMenu(false);
+        }
+    });
+
+    document.querySelectorAll('#mobileMenuPanel a').forEach((link) => {
+        link.addEventListener('click', () => toggleMobileMenu(false));
     });
 
     if (mobileMediaQuery.addEventListener) {
-        mobileMediaQuery.addEventListener('change', syncSidebarState);
+        mobileMediaQuery.addEventListener('change', syncMobileMenuState);
     } else if (mobileMediaQuery.addListener) {
-        mobileMediaQuery.addListener(syncSidebarState);
+        mobileMediaQuery.addListener(syncMobileMenuState);
     }
 
-    syncSidebarState();
+    syncMobileMenuState();
+
+    function showInstallEntryPoints() {
+        if (isStandalone) {
+            return;
+        }
+
+        if (mobileInstallButton) {
+            mobileInstallButton.hidden = false;
+            mobileInstallButton.classList.remove('hidden');
+            mobileInstallButton.classList.add('inline-flex');
+        }
+
+        if (installBanner && deferredInstallPrompt) {
+            installBanner.hidden = false;
+            requestAnimationFrame(() => installBanner.classList.add('show'));
+        }
+    }
+
+    function hideInstallEntryPoints() {
+        installBanner?.classList.remove('show');
+        if (installBanner) {
+            installBanner.hidden = true;
+        }
+
+        if (mobileInstallButton) {
+            mobileInstallButton.hidden = true;
+            mobileInstallButton.classList.add('hidden');
+            mobileInstallButton.classList.remove('inline-flex');
+        }
+    }
+
+    async function promptInstallApp() {
+        if (isStandalone) {
+            return;
+        }
+
+        if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const choice = await deferredInstallPrompt.userChoice;
+            if (choice.outcome !== 'accepted') {
+                showAlert('Install aplikasi', 'Anda masih bisa install kapan saja dari tombol menu browser.', 'info');
+            }
+            deferredInstallPrompt = null;
+            installBanner?.classList.remove('show');
+            return;
+        }
+
+        if (isIos) {
+            showAlert('Install aplikasi', 'Di iPhone/iPad, buka menu Share lalu pilih Add to Home Screen.', 'info');
+            return;
+        }
+
+        showAlert('Install aplikasi', 'Jika tombol install belum muncul, buka menu browser lalu pilih Install app atau Tambahkan ke layar utama.', 'info');
+    }
+
+    mobileInstallButton?.addEventListener('click', promptInstallApp);
+    installBannerButton?.addEventListener('click', promptInstallApp);
+    installBannerDismiss?.addEventListener('click', () => {
+        installBanner?.classList.remove('show');
+    });
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        showInstallEntryPoints();
+    });
+
+    window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        hideInstallEntryPoints();
+        showAlert('Berhasil', 'Aplikasi berhasil di-install di perangkat ini.', 'success');
+    });
+
+    showInstallEntryPoints();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('<?= base_url('sw.js?v=2') ?>').catch(() => {
+                // PWA registration failure should not block the app.
+            });
+        });
+    }
 </script>
 </body>
 

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10b981">
+    <title>Offline - SIKEP</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f8fafc;
+            --panel: rgba(255, 255, 255, 0.96);
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #10b981;
+            --primary-dark: #0f766e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            font-family: Inter, system-ui, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(16, 185, 129, 0.18), transparent 24%),
+                radial-gradient(circle at left, rgba(20, 184, 166, 0.16), transparent 20%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+        }
+
+        .card {
+            width: min(100%, 420px);
+            padding: 32px 28px;
+            border-radius: 28px;
+            background: var(--panel);
+            box-shadow: 0 28px 60px -36px rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            text-align: center;
+        }
+
+        .badge {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 22px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 1.75rem;
+            line-height: 1.15;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 18px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="badge">AI</div>
+        <h1>Koneksi sedang offline</h1>
+        <p>Beberapa halaman tidak bisa dimuat tanpa internet. Saat koneksi kembali normal, aplikasi akan bisa dipakai lagi seperti biasa.</p>
+        <a href="./index.php">Coba lagi</a>
+    </main>
+</body>
+</html>

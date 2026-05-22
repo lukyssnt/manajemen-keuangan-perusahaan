@@ -99,6 +99,14 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $sys['nama_aplikasi'] ?: 'SIKEP' ?> - Dashboard</title>
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="<?= htmlspecialchars($sys['nama_aplikasi'] ?: 'SIKEP') ?>">
+    <link rel="manifest" href="<?= base_url('pwa-manifest.php') ?>">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?= base_url('pwa-icon.php?size=192') ?>">
+    <link rel="apple-touch-icon" href="<?= base_url('pwa-icon.php?size=192') ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -158,6 +166,12 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 radial-gradient(circle at left 15%, rgba(45, 212, 191, 0.08), transparent 18%),
                 linear-gradient(180deg, #f8fafc 0%, #f1f5f9 55%, #eef2f7 100%);
             color: var(--slate-700);
+        }
+
+        body.sidebar-open .topbar-shell,
+        body.sidebar-open main {
+            pointer-events: none;
+            user-select: none;
         }
 
         h1,
@@ -387,6 +401,52 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             display: inline-flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .install-banner {
+            position: fixed;
+            left: 1rem;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(16px);
+            transition: opacity var(--motion-base) var(--motion-ease),
+                        transform var(--motion-base) var(--motion-ease),
+                        visibility 0s linear var(--motion-base);
+        }
+
+        .install-banner.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+            transition: opacity var(--motion-base) var(--motion-ease),
+                        transform var(--motion-base) var(--motion-ease);
+        }
+
+        .install-banner-card {
+            background: rgba(15, 23, 42, 0.96);
+            color: #fff;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 24px 44px -28px rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            backdrop-filter: blur(18px);
+        }
+
+        .install-button {
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--emerald-500), var(--teal-500));
+            color: #fff;
+            box-shadow: 0 18px 34px -22px rgba(5, 150, 105, 0.72);
+        }
+
+        .install-button[hidden],
+        .install-banner[hidden] {
+            display: none !important;
         }
 
         /* Custom Animations */
@@ -626,20 +686,6 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         }
 
         @media (max-width: 767px) {
-            .mobile-drawer {
-                position: fixed;
-                inset: 0 auto 0 0;
-                width: min(82vw, 20rem);
-                display: flex !important;
-                transform: translateX(-105%);
-                transition: transform var(--motion-slow) var(--motion-ease);
-                z-index: 50;
-            }
-
-            .mobile-drawer.open {
-                transform: translateX(0);
-            }
-
             .nav-label {
                 margin-left: 1.2rem;
                 margin-right: 1.2rem;
@@ -650,20 +696,46 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 margin-right: 0.65rem;
             }
 
-            .mobile-overlay {
+            .mobile-menu-panel {
                 position: fixed;
                 inset: 0;
-                background: rgba(15, 23, 42, 0.42);
-                backdrop-filter: blur(6px);
                 opacity: 0;
+                visibility: hidden;
                 pointer-events: none;
-                transition: opacity var(--motion-base) var(--motion-ease);
-                z-index: 40;
+                transition: opacity var(--motion-base) var(--motion-ease),
+                            visibility 0s linear var(--motion-base);
+                z-index: 80;
             }
 
-            .mobile-overlay.open {
+            .mobile-menu-panel.open {
                 opacity: 1;
+                visibility: visible;
                 pointer-events: auto;
+                transition: opacity var(--motion-base) var(--motion-ease);
+            }
+
+            .mobile-menu-backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.56);
+                backdrop-filter: blur(10px);
+            }
+
+            .mobile-menu-surface {
+                position: relative;
+                min-height: 100dvh;
+                height: 100dvh;
+                width: 100%;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 250, 252, 0.99) 72%, rgba(240, 253, 250, 0.98) 100%);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                transform: translate3d(0, 24px, 0);
+                transition: transform var(--motion-slow) var(--motion-ease);
+            }
+
+            .mobile-menu-panel.open .mobile-menu-surface {
+                transform: translate3d(0, 0, 0);
             }
 
             .topbar-shell {
@@ -752,8 +824,35 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 justify-content: flex-start;
             }
 
-            .sidebar-brand {
+            .mobile-menu-panel .sidebar-brand {
                 min-height: auto;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                background: inherit;
+            }
+
+            .mobile-menu-panel .sidebar-footer {
+                position: sticky;
+                bottom: 0;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.98));
+                box-shadow: 0 -18px 30px -28px rgba(15, 23, 42, 0.28);
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+            }
+
+            .mobile-menu-panel .nav-item {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .mobile-menu-panel .nav-item.active::before {
+                left: -0.15rem;
+            }
+
+            .install-banner {
+                left: 0.75rem;
+                right: 0.75rem;
+                bottom: calc(0.75rem + env(safe-area-inset-bottom));
             }
         }
 
@@ -781,9 +880,90 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
 <body class="bg-gray-50 text-gray-800 antialiased">
 
     <div class="flex h-screen overflow-hidden">
-        <div id="mobileOverlay" class="mobile-overlay md:hidden"></div>
+        <div id="mobileMenuPanel" class="mobile-menu-panel md:hidden" aria-hidden="true">
+            <div id="mobileMenuBackdrop" class="mobile-menu-backdrop"></div>
+            <div class="mobile-menu-surface">
+                <div class="sidebar-brand flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="sidebar-logo">
+                            <?php if (!empty($sys['logo'])): ?>
+                                <img src="uploads/<?= $sys['logo'] ?>" alt="Logo" class="h-9 w-9 object-contain">
+                            <?php else: ?>
+                                <i class="fas fa-mosque text-xl text-emerald-600"></i>
+                            <?php endif; ?>
+                        </div>
+                        <div class="min-w-0">
+                            <h1 class="font-display text-[1.1rem] font-semibold text-slate-800 leading-tight truncate">
+                                <?= $sys['nama_aplikasi'] ?: 'SIKEP' ?>
+                            </h1>
+                            <p class="text-xs text-slate-500 mt-0.5 leading-4">Dashboard bendahara modern</p>
+                        </div>
+                    </div>
+                    <button id="mobileMenuCloseButton" class="sidebar-close" type="button" aria-label="Tutup menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <nav class="flex-1 overflow-y-auto py-3">
+                    <?php foreach ($nav_groups as $group): ?>
+                        <div class="nav-group">
+                            <div class="nav-label"><?= $group['label'] ?></div>
+                            <ul class="space-y-1">
+                                <?php foreach ($group['items'] as $item): ?>
+                                    <li>
+                                        <a href="<?= $item['href'] ?>"
+                                            class="nav-item flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == $item['key'] ? 'active' : '' ?>">
+                                            <i class="<?= $item['icon'] ?>"></i>
+                                            <span class="nav-item-text font-medium"><?= $item['text'] ?></span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endforeach; ?>
+                </nav>
+
+                <div class="sidebar-footer p-4 border-t border-gray-100">
+                    <button id="mobileInstallButton" class="install-button hidden w-full items-center justify-center gap-2 px-4 py-3 text-sm font-semibold mb-3" type="button">
+                        <i class="fas fa-download"></i>
+                        Install Aplikasi
+                    </button>
+                    <div class="sidebar-badge rounded-2xl px-4 py-3 mb-3">
+                        <div class="text-xs font-semibold uppercase tracking-[0.18em]">Akun Aktif</div>
+                        <div class="mt-1 font-semibold text-sm text-slate-800"><?= htmlspecialchars($display_name) ?></div>
+                        <div class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mt-1"><?= str_replace('_', ' ', $user_role) ?></div>
+                    </div>
+                    <a href="logout.php?csrf_token=<?= $_SESSION['csrf_token'] ?>"
+                        class="logout-link flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-2xl transition-colors">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="font-medium">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="installBanner" class="install-banner" hidden>
+            <div class="install-banner-card">
+                <div class="flex items-start gap-3">
+                    <div class="h-11 w-11 rounded-2xl bg-white/10 flex items-center justify-center text-emerald-300 flex-shrink-0">
+                        <i class="fas fa-mobile-screen-button"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="font-semibold text-sm">Download aplikasi ini</div>
+                        <p class="text-xs text-slate-300 mt-1 leading-5">Install ke layar utama HP agar akses lebih cepat seperti aplikasi native.</p>
+                    </div>
+                    <button id="installBannerDismiss" class="h-9 w-9 rounded-xl bg-white/5 text-slate-300 flex items-center justify-center flex-shrink-0" type="button" aria-label="Tutup notifikasi install">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+                <button id="installBannerButton" class="install-button w-full mt-4 px-4 py-3 text-sm font-semibold" type="button">
+                    Install Sekarang
+                </button>
+            </div>
+        </div>
+
         <!-- Sidebar -->
-        <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl flex flex-col z-10" aria-hidden="true">
+        <aside id="appSidebar" class="sidebar-shell w-64 shadow-xl hidden md:flex flex-col z-10">
             <div class="sidebar-brand flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="sidebar-logo">
@@ -800,9 +980,6 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                         <p class="text-xs text-slate-500 mt-0.5 leading-4">Dashboard bendahara modern</p>
                     </div>
                 </div>
-                <button id="sidebarCloseButton" class="sidebar-close md:hidden" type="button" aria-label="Tutup menu">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
 
             <nav class="flex-1 overflow-y-auto py-3">
