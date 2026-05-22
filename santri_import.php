@@ -4,64 +4,80 @@ require_once 'config/koneksi.php';
 $role = $_SESSION['role'];
 $id_unit_session = $_SESSION['id_unit'];
 
-if (isset($_POST['import'])) {
-    $fileName = $_FILES['file']['name'];
-    $fileTmp = $_FILES['file']['tmp_name'];
-    $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+if (isset($_POST['sync'])) {
+    $dbAbsen = new DatabaseAbsen();
+    $connAbsen = $dbAbsen->getConnection();
 
-    if ($fileExt == 'csv') {
-        $file = fopen($fileTmp, "r");
-        $count = 0;
-        $status = 'Aktif';
-
-        $first_line = fgets($file);
-        if (trim($first_line) !== 'sep=;' && trim($first_line) !== 'sep=,') {
-            rewind($file);
-        }
-
-        $delimiter = ";";
-        while (($data = fgetcsv($file, 1000, $delimiter)) !== FALSE) {
-            if (count($data) == 1 && strpos($data[0], ',') !== false) {
-                rewind($file);
-                $first_line = fgets($file);
-                if (trim($first_line) !== 'sep=;' && trim($first_line) !== 'sep=,') {
-                    rewind($file);
+    if ($connAbsen) {
+        try {
+            // Filter by jenis_kelamin based on unit for non-super_admin
+            // Unit 1 (Putra) = L, Unit 2 (Putri) = P
+            $filter = "";
+            if ($role != 'super_admin') {
+                if ($id_unit_session == 1) {
+                    $filter = "WHERE jenis_kelamin = 'L'";
+                } else if ($id_unit_session == 2) {
+                    $filter = "WHERE jenis_kelamin = 'P'";
                 }
-                $delimiter = ",";
-                continue;
             }
 
-            if (strtolower($data[0] ?? '') == 'nis')
-                continue;
+            // Query ke database absen
+            $query_santri = "SELECT nis, nama, kelas_id, status, jenis_kelamin FROM mst_santri $filter";
+            $stmt = $connAbsen->prepare($query_santri);
+            $stmt->execute();
+            $data_santri = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $nis = mysqli_real_escape_string($koneksi, $data[0]);
-            $nama = mysqli_real_escape_string($koneksi, $data[1]);
-            $kelas = mysqli_real_escape_string($koneksi, $data[2]);
-            $status_raw = isset($data[3]) ? mysqli_real_escape_string($koneksi, $data[3]) : 'Aktif';
+            $count = 0;
+            
+            // Gunakan Transaction untuk optimasi bulk insert
+            mysqli_begin_transaction($koneksi);
+            
+            try {
+                foreach ($data_santri as $row) {
+                    $nis = mysqli_real_escape_string($koneksi, $row['nis']);
+                    $nama = mysqli_real_escape_string($koneksi, $row['nama']);
+                    
+                    // Untuk sementara kita pakai kelas_id jika tabel kelas di db absen tidak dipetakan
+                    $kelas = mysqli_real_escape_string($koneksi, $row['kelas_id'] ?? '-'); 
+                    
+                    $status_raw = $row['status'];
+                    $jk = $row['jenis_kelamin'];
 
-            if (strtolower($status_raw) == 'lulus' || strtolower($status_raw) == 'alumni') {
-                $status = 'Lulus';
-            } else {
-                $status = 'Aktif';
+                    if ($status_raw == 'Alumni' || $status_raw == 'Keluar') {
+                        $status = 'Lulus';
+                    } else {
+                        $status = 'Aktif';
+                    }
+                    
+                    // Tentukan unit otomatis dari jenis kelamin jika Super Admin
+                    if ($role == 'super_admin') {
+                        $target_unit = ($jk == 'P') ? 2 : 1; 
+                    } else {
+                        $target_unit = $id_unit_session;
+                    }
+
+                    if (!empty($nis) && !empty($nama)) {
+                        $query = "INSERT INTO santri (id_unit, nis, nama, kelas, status) VALUES ('$target_unit', '$nis', '$nama', '$kelas', '$status') 
+                                  ON DUPLICATE KEY UPDATE nama='$nama', kelas='$kelas', status='$status'";
+                        mysqli_query($koneksi, $query);
+                        $count++;
+                    }
+                }
+                
+                // Commit jika semua query berhasil
+                mysqli_commit($koneksi);
+                
+                header("Location: santri.php?msg=synced&count=$count");
+                exit;
+            } catch (Exception $e) {
+                mysqli_rollback($koneksi);
+                $error_msg = "Gagal sinkronisasi data lokal: " . $e->getMessage();
             }
-
-            if ($role == 'super_admin') {
-                $target_unit = $_POST['id_unit'];
-            } else {
-                $target_unit = $id_unit_session;
-            }
-
-            if (!empty($nis) && !empty($nama)) {
-                $query = "INSERT INTO santri (id_unit, nis, nama, kelas, status) VALUES ('$target_unit', '$nis', '$nama', '$kelas', '$status') 
-                          ON DUPLICATE KEY UPDATE nama='$nama', kelas='$kelas', status='$status'";
-                mysqli_query($koneksi, $query);
-                $count++;
-            }
+        } catch (PDOException $e) {
+            $error_msg = "Gagal terhubung/query ke database absen: " . $e->getMessage();
         }
-        fclose($file);
-        $redirect = ($status == 'Lulus') ? 'alumni.php' : 'santri.php';
-        header("Location: $redirect?msg=added");
-        exit;
+    } else {
+        $error_msg = "Koneksi database absen gagal. Pastikan detail database benar.";
     }
 }
 
@@ -74,48 +90,33 @@ include 'layout/header.php';
             class="text-gray-500 hover:text-emerald-600 transition-colors flex items-center gap-2 mb-2">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
-        <h2 class="text-3xl font-bold text-gray-800">Import Santri</h2>
+        <h2 class="text-3xl font-bold text-gray-800">Sinkronisasi Santri</h2>
     </div>
 
+    <?php if (isset($error_msg)): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 shadow-sm" role="alert">
+            <span class="block sm:inline"><?= htmlspecialchars($error_msg) ?></span>
+        </div>
+    <?php endif; ?>
+
     <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
-        <div class="mb-6 bg-blue-50 text-blue-800 p-4 rounded-lg text-sm">
-            <strong>Format CSV:</strong><br>
-            Kolom 1: NIS<br>
-            Kolom 2: Nama Lengkap<br>
-            Kolom 3: Kelas<br>
-            Kolom 4: Status (Aktif / Lulus - Opsional, default: Aktif)<br>
-            (Tanpa header atau Header baris pertama akan dilewati jika berisi 'NIS')
+        <div class="mb-6 bg-blue-50 text-blue-800 p-5 rounded-lg text-sm border border-blue-100">
+            <strong class="text-lg block mb-2"><i class="fas fa-info-circle mr-1"></i> Informasi Sinkronisasi</strong>
+            Data santri akan ditarik secara otomatis dari database sistem absensi. Aturan integrasi:
+            <ul class="list-disc ml-5 mt-2 space-y-1">
+                <li>Santri laki-laki (L) otomatis masuk ke unit <b>Putra</b>.</li>
+                <li>Santri perempuan (P) otomatis masuk ke unit <b>Putri</b>.</li>
+                <li>Santri dengan status 'Alumni' atau 'Keluar' akan diset sebagai <b>'Lulus'</b>.</li>
+                <li>Jika data NIS sudah ada, nama dan statusnya akan <b>diperbarui (Update)</b>.</li>
+            </ul>
         </div>
 
-        <form action="" method="post" enctype="multipart/form-data">
-            <?php if ($role == 'super_admin'): ?>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-bold mb-2">Target Unit</label>
-                    <select name="id_unit"
-                        class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500">
-                        <option value="1">Putra</option>
-                        <option value="2">Putri</option>
-                    </select>
-                </div>
-            <?php endif; ?>
-
-            <div class="mb-6">
-                <label class="block text-gray-700 font-bold mb-2">File CSV</label>
-                <input type="file" name="file" accept=".csv" required
-                    class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500">
-            </div>
-
-            <div class="flex justify-between items-center">
-                <a href="santri_template.php"
-                    class="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
-                    <i class="fas fa-download"></i> Download Template CSV
-                </a>
-                <div class="flex gap-2">
-                    <button type="submit" name="import"
-                        class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-colors font-bold">
-                        Import Data
-                    </button>
-                </div>
+        <form action="" method="post">
+            <div class="flex justify-end items-center">
+                <button type="submit" name="sync"
+                    class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-all font-bold flex items-center gap-2 hover:-translate-y-0.5">
+                    <i class="fas fa-sync-alt"></i> Tarik Data Sekarang
+                </button>
             </div>
         </form>
     </div>

@@ -9,10 +9,13 @@ if (isset($_SESSION['login'])) {
 $error = "";
 
 if (isset($_POST['login'])) {
-    $username = mysqli_real_escape_string($koneksi, $_POST['username']);
-    $password = mysqli_real_escape_string($koneksi, $_POST['password']);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    $result = mysqli_query($koneksi, "SELECT * FROM users WHERE username = '$username'");
+    $stmt = mysqli_prepare($koneksi, "SELECT * FROM users WHERE username = ?");
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);

@@ -35,9 +35,11 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    $update_sql = "UPDATE pengaturan SET nama_aplikasi = '$nama_aplikasi', logo = '$nama_logo_baru' WHERE id = " . $settings['id'];
+    $update_sql = "UPDATE pengaturan SET nama_aplikasi = ?, logo = ? WHERE id = ?";
+    $stmt = mysqli_prepare($koneksi, $update_sql);
+    mysqli_stmt_bind_param($stmt, "ssi", $nama_aplikasi, $nama_logo_baru, $settings['id']);
 
-    if (mysqli_query($koneksi, $update_sql)) {
+    if (mysqli_stmt_execute($stmt)) {
         log_audit("Memperbarui Pengaturan Website (Aplikasi: $nama_aplikasi)");
         header("Location: pengaturan.php?msg=updated");
         exit;

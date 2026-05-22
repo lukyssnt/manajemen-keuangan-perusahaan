@@ -1,9 +1,20 @@
-# Database Configuration (Personal credentials)
+# Database Configuration
 config/koneksi.php
+.env
 
 # Uploaded Files
-uploads/
+uploads/*
 !uploads/index.html
+
+# Backup files
+*.sql
+*.zip
+*.rar
+
+# Logs & cache
+*.log
+cache/
+tmp/
 
 # PHP system files
 .php_cs.cache

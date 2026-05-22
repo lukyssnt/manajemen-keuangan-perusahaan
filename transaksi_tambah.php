@@ -49,18 +49,20 @@ if (isset($_POST['submit'])) {
     }
 
     // 1. Insert Transaksi
-    $query_insert = "INSERT INTO transaksi (id_unit, id_user, jenis, nominal, keterangan, nota) 
-                    VALUES ('$target_unit', '$id_user', '$jenis', '$nominal', '$keterangan', " .
-        ($nama_file_baru ? "'$nama_file_baru'" : "NULL") . ")";
+    $query_insert = "INSERT INTO transaksi (id_unit, id_user, jenis, nominal, keterangan, nota) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($koneksi, $query_insert);
+    mysqli_stmt_bind_param($stmt, "iisiss", $target_unit, $id_user, $jenis, $nominal, $keterangan, $nama_file_baru);
 
-    if (mysqli_query($koneksi, $query_insert)) {
+    if (mysqli_stmt_execute($stmt)) {
         // 2. Update Saldo Rekening
         if ($jenis == 'Masuk') {
-            $q_update = "UPDATE rekening SET saldo = saldo + $nominal WHERE id_unit = '$target_unit'";
+            $q_update = "UPDATE rekening SET saldo = saldo + ? WHERE id_unit = ?";
         } else {
-            $q_update = "UPDATE rekening SET saldo = saldo - $nominal WHERE id_unit = '$target_unit'";
+            $q_update = "UPDATE rekening SET saldo = saldo - ? WHERE id_unit = ?";
         }
-        mysqli_query($koneksi, $q_update);
+        $stmt_update = mysqli_prepare($koneksi, $q_update);
+        mysqli_stmt_bind_param($stmt_update, "di", $nominal, $target_unit);
+        mysqli_stmt_execute($stmt_update);
 
         log_audit("Menambah transaksi $jenis senilai " . format_rupiah($nominal) . ": $keterangan");
 
