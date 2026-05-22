@@ -77,6 +77,7 @@ if ($role != 'super_admin') {
 
     <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
         <form action="" method="post">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
             <?php if ($role == 'super_admin'): ?>
                 <div class="mb-4">
