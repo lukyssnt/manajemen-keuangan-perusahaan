@@ -98,10 +98,10 @@ $total_saldo = $total_masuk - $total_keluar; // Use calculated instead of table 
 include 'layout/header.php';
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="mb-6 mobile-toolbar">
     <h2 class="text-3xl font-bold text-gray-800">Transaksi Kas</h2>
 
-    <div class="flex gap-2 w-full md:w-auto">
+    <div class="mobile-toolbar-actions md:w-auto">
         <form action="" method="get" class="flex-1 md:w-64 relative">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                 <i class="fas fa-search"></i>
@@ -110,14 +110,14 @@ include 'layout/header.php';
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-emerald-500 transition-colors">
         </form>
         <a href="transaksi_tambah.php"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg">
+            class="mobile-button-wide bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg">
             <i class="fas fa-plus mr-2"></i> Transaksi Baru
         </a>
     </div>
 </div>
 
 <!-- Summary Widgets -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="mobile-stats mb-8">
     <div
         class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4 hover-card">
         <div class="bg-blue-50 p-4 rounded-lg text-blue-600">
@@ -151,8 +151,8 @@ include 'layout/header.php';
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+    <div class="mobile-table-wrap">
+        <table class="mobile-table w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-100">
                     <th class="p-4 font-semibold">Tgl</th>

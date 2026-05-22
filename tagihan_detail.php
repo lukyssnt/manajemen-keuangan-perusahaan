@@ -20,11 +20,22 @@ if (!$santri) {
     exit;
 }
 
+// Resolve available date column on tagihan table to avoid silent query failure
+$tagihan_date_field = null;
+foreach (['tanggal_dibuat', 'created_at', 'tanggal'] as $candidate) {
+    $check_col = mysqli_query($koneksi, "SHOW COLUMNS FROM tagihan LIKE '$candidate'");
+    if ($check_col && mysqli_num_rows($check_col) > 0) {
+        $tagihan_date_field = $candidate;
+        break;
+    }
+}
+$order_by_tagihan = $tagihan_date_field ? "t.$tagihan_date_field DESC" : "t.id DESC";
+
 // Fetch All Bills for this Student
 $q_bills = "SELECT t.*, (t.nominal - t.terbayar) as sisa
              FROM tagihan t 
              WHERE t.id_santri = '$id_santri'
-             ORDER BY t.tanggal_dibuat DESC";
+             ORDER BY $order_by_tagihan";
 $res_bills = mysqli_query($koneksi, $q_bills);
 
 // Fetch Total Summary
@@ -36,14 +47,14 @@ $total_sisa = $summary['total_nominal'] - $summary['total_terbayar'];
 ?>
 
 <div class="max-w-5xl mx-auto">
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-6 mobile-toolbar">
         <a href="tagihan.php" class="text-gray-500 hover:text-emerald-600 transition-colors flex items-center gap-2">
             <i class="fas fa-arrow-left"></i> Kembali Ke Daftar
         </a>
-        <div class="flex gap-2">
+        <div class="mobile-toolbar-actions md:w-auto">
             <!-- Rekap Print across all bills -->
             <a href="kuitansi_cetak_all.php?id_santri=<?= $id_santri ?>" target="_blank"
-                class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm">
+                class="mobile-button-wide bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm">
                 <i class="fas fa-print mr-2"></i> Cetak Rekap Semua
             </a>
         </div>
@@ -51,18 +62,18 @@ $total_sisa = $summary['total_nominal'] - $summary['total_terbayar'];
 
     <!-- Student Info Card -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
-        <div class="bg-emerald-600 p-6 text-white flex justify-between items-center">
+        <div class="bg-emerald-600 p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h3 class="text-2xl font-bold uppercase"><?= $santri['nama'] ?></h3>
                 <p class="text-emerald-100">NIS: <?= $santri['nis'] ?> | Kelas: <?= $santri['kelas'] ?>
                     (<?= $santri['nama_unit'] ?>)</p>
             </div>
-            <div class="text-right hidden md:block">
+            <div class="text-left md:text-right">
                 <p class="text-xs text-emerald-200 uppercase tracking-widest font-bold">Status Keuangan</p>
                 <span class="text-xl font-bold"><?= $total_sisa == 0 ? 'LUNAS' : 'MENUNGGAK' ?></span>
             </div>
         </div>
-        <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center bg-gray-50">
+        <div class="p-8 mobile-stats text-center bg-gray-50">
             <div>
                 <p class="text-gray-500 text-sm mb-1">Total Kewajiban</p>
                 <h4 class="text-2xl font-bold text-gray-800">Rp
@@ -83,7 +94,8 @@ $total_sisa = $summary['total_nominal'] - $summary['total_terbayar'];
     <!-- Detailed Bills List -->
     <h3 class="text-lg font-bold text-gray-800 mb-4 px-2">Rincian Tagihan</h3>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
-        <table class="w-full text-left">
+        <div class="mobile-table-wrap">
+        <table class="mobile-table w-full text-left">
             <thead>
                 <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider border-b">
                     <th class="p-4">Tanggal</th>
@@ -97,8 +109,14 @@ $total_sisa = $summary['total_nominal'] - $summary['total_terbayar'];
             </thead>
             <tbody class="divide-y divide-gray-50">
                 <?php while ($b = mysqli_fetch_assoc($res_bills)): ?>
+                    <?php
+                    $tanggal_tagihan = '-';
+                    if ($tagihan_date_field && !empty($b[$tagihan_date_field])) {
+                        $tanggal_tagihan = date('d/m/y', strtotime($b[$tagihan_date_field]));
+                    }
+                    ?>
                     <tr class="hover:bg-gray-50 transition-colors">
-                        <td class="p-4 text-sm text-gray-600"><?= date('d/m/y', strtotime($b['tanggal_dibuat'])) ?></td>
+                        <td class="p-4 text-sm text-gray-600"><?= $tanggal_tagihan ?></td>
                         <td class="p-4 text-sm font-bold text-gray-800"><?= $b['judul'] ?></td>
                         <td class="p-4 text-right text-sm">Rp <?= number_format($b['nominal'], 0, ',', '.') ?></td>
                         <td class="p-4 text-right text-sm text-emerald-600">Rp
@@ -135,15 +153,21 @@ $total_sisa = $summary['total_nominal'] - $summary['total_terbayar'];
                         </td>
                     </tr>
                 <?php endwhile; ?>
+                <?php if ($res_bills && mysqli_num_rows($res_bills) == 0): ?>
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-gray-300 text-sm italic">Belum ada item tagihan untuk santri ini.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
+        </div>
     </div>
 
     <!-- Individual Payment History -->
     <h3 class="text-lg font-bold text-gray-800 mb-4 px-2">Riwayat Pembayaran Terakhir</h3>
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
+        <div class="mobile-table-wrap">
+            <table class="mobile-table w-full text-left">
                 <thead>
                     <tr class="text-gray-500 text-xs uppercase tracking-wider border-b">
                         <th class="p-4">Tanggal</th>

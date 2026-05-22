@@ -59,12 +59,12 @@ $query = "SELECT s.*, u.nama_unit
 $result = mysqli_query($koneksi, $query);
 ?>
 
-<div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="mb-6 mobile-toolbar">
     <h2 class="text-3xl font-bold text-gray-800">Data Santri</h2>
 
-    <div class="flex gap-2 w-full md:w-auto">
+    <div class="mobile-toolbar-actions md:w-auto">
         <a href="alumni.php"
-            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm font-bold border"
+            class="mobile-button-wide bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center shadow-sm font-bold border"
             title="Lihat Alumni">
             <i class="fas fa-user-graduate mr-2"></i> Alumni
         </a>
@@ -76,25 +76,25 @@ $result = mysqli_query($koneksi, $query);
                 class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-emerald-500 transition-colors">
         </form>
         <a href="santri_import.php"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg"
+            class="mobile-button-wide bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg"
             title="Import CSV">
-            <i class="fas fa-file-import"></i>
+            <i class="fas fa-file-import md:mr-0 mr-2"></i><span class="md:hidden">Import CSV</span>
         </a>
         <a href="santri_export.php"
-            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg"
+            class="mobile-button-wide bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg"
             title="Export Excel">
-            <i class="fas fa-file-excel"></i>
+            <i class="fas fa-file-excel md:mr-0 mr-2"></i><span class="md:hidden">Export Excel</span>
         </a>
         <a href="santri_tambah.php"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg">
+            class="mobile-button-wide bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center shadow-lg">
             <i class="fas fa-plus mr-2"></i> Tambah
         </a>
     </div>
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+    <div class="mobile-table-wrap">
+        <table class="mobile-table w-full text-left border-collapse">
             <thead>
                 <tr class="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider border-b border-gray-100">
                     <th class="p-4 font-semibold">No</th>

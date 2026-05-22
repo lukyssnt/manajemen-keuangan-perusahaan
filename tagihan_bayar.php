@@ -76,7 +76,7 @@ include 'layout/header.php';
         <h2 class="text-3xl font-bold text-gray-800">Bayar Tagihan</h2>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
         <div class="mb-6 border-b pb-4">
             <p class="text-sm text-gray-500">Rincian Santri</p>
             <h3 class="text-lg font-bold">
@@ -91,19 +91,19 @@ include 'layout/header.php';
             <h3 class="text-xl font-bold text-emerald-700">
                 <?= $row['judul'] ?>
             </h3>
-            <div class="flex justify-between mt-2">
+            <div class="flex justify-between gap-4 mt-2 text-sm md:text-base">
                 <span>Total Tagihan:</span>
                 <span class="font-bold">Rp
                     <?= number_format($row['nominal'], 0, ',', '.') ?>
                 </span>
             </div>
-            <div class="flex justify-between mt-1 text-gray-500">
+            <div class="flex justify-between gap-4 mt-1 text-gray-500 text-sm md:text-base">
                 <span>Sudah Dibayar:</span>
                 <span>Rp
                     <?= number_format($row['terbayar'], 0, ',', '.') ?>
                 </span>
             </div>
-            <div class="flex justify-between mt-2 p-2 bg-red-50 text-red-700 rounded-lg">
+            <div class="flex justify-between gap-4 mt-2 p-3 bg-red-50 text-red-700 rounded-lg text-sm md:text-base">
                 <span class="font-bold">Sisa Pembayaran:</span>
                 <span class="font-bold">Rp
                     <?= number_format($sisa_tagihan, 0, ',', '.') ?>
@@ -112,6 +112,7 @@ include 'layout/header.php';
         </div>
 
         <form action="" method="post">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <div class="mb-4">
                 <label class="block text-gray-700 font-bold mb-2">Jumlah Pembayaran (Rp)</label>
                 <input type="number" name="jumlah" value="<?= $sisa_tagihan ?>" max="<?= $sisa_tagihan ?>" required

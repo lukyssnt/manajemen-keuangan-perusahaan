@@ -46,6 +46,43 @@ $section_meta = [
 
 $active_section = $section_meta[$section_key];
 
+$nav_groups = [
+    [
+        'label' => 'Utama',
+        'items' => [
+            ['href' => 'index.php', 'key' => 'dashboard', 'icon' => 'fas fa-home', 'text' => 'Dashboard'],
+            ['href' => 'santri.php', 'key' => 'santri', 'icon' => 'fas fa-user-graduate', 'text' => 'Data Santri'],
+            ['href' => 'alumni.php', 'key' => 'alumni', 'icon' => 'fas fa-user-graduate', 'text' => 'Data dan Tagihan Alumni'],
+        ]
+    ],
+    [
+        'label' => 'Keuangan',
+        'items' => [
+            ['href' => 'tagihan.php', 'key' => 'tagihan', 'icon' => 'fas fa-file-invoice-dollar', 'text' => 'Tagihan Santri'],
+            ['href' => 'transaksi.php', 'key' => 'transaksi', 'icon' => 'fas fa-exchange-alt', 'text' => 'Transaksi Kas'],
+            ['href' => 'laporan.php', 'key' => 'laporan', 'icon' => 'fas fa-file-invoice-dollar', 'text' => 'Laporan'],
+        ]
+    ],
+];
+
+if ($user_role == 'super_admin') {
+    $nav_groups[] = [
+        'label' => 'Administrasi',
+        'items' => [
+            ['href' => 'users.php', 'key' => 'users', 'icon' => 'fas fa-users-cog', 'text' => 'Manajemen User'],
+            ['href' => 'audit_log.php', 'key' => 'audit', 'icon' => 'fas fa-history', 'text' => 'Audit Log'],
+            ['href' => 'pengaturan.php', 'key' => 'pengaturan', 'icon' => 'fas fa-cog', 'text' => 'Pengaturan Web'],
+        ]
+    ];
+}
+
+$nav_groups[] = [
+    'label' => 'Akun',
+    'items' => [
+        ['href' => 'profil.php', 'key' => 'profil', 'icon' => 'fas fa-user-circle', 'text' => 'Profil Saya'],
+    ]
+];
+
 // Fetch System Settings
 $q_conf = mysqli_query($koneksi, "SELECT * FROM pengaturan LIMIT 1");
 $sys = mysqli_fetch_assoc($q_conf);
@@ -219,7 +256,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
 
         .nav-item {
             position: relative;
-            margin: 0 0.9rem;
+            margin: 0 0.75rem;
             border-radius: 1.15rem;
             transition: background-color var(--motion-base) var(--motion-ease),
                         color var(--motion-base) var(--motion-ease),
@@ -236,6 +273,35 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
 
         .nav-item:hover {
             transform: translateX(2px);
+        }
+
+        .nav-label {
+            color: var(--slate-500);
+            font-size: 0.69rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin: 1.1rem 1.4rem 0.55rem;
+            padding-top: 0.9rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.72);
+        }
+
+        .nav-group:first-child .nav-label {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .nav-item-text {
+            line-height: 1.35;
+            font-size: 0.98rem;
+        }
+
+        .nav-item-meta {
+            display: block;
+            margin-top: 0.1rem;
+            font-size: 0.72rem;
+            color: var(--slate-500);
         }
 
         .nav-item.active {
@@ -267,6 +333,26 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             box-shadow: 20px 0 50px -42px rgba(15, 23, 42, 0.22);
         }
 
+        .sidebar-brand {
+            min-height: 5.75rem;
+        }
+
+        .sidebar-logo {
+            height: 2.8rem;
+            width: 2.8rem;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(45, 212, 191, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-footer {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(236, 253, 245, 0.55));
+        }
+
         .topbar-shell {
             background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(22px);
@@ -288,6 +374,18 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.13), rgba(45, 212, 191, 0.2));
             border: 1px solid rgba(16, 185, 129, 0.14);
             color: var(--emerald-600);
+        }
+
+        .sidebar-close {
+            height: 2.5rem;
+            width: 2.5rem;
+            border-radius: 0.9rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            background: rgba(255, 255, 255, 0.86);
+            color: var(--slate-500);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Custom Animations */
@@ -471,6 +569,45 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             box-shadow: 0 14px 30px -24px rgba(15, 23, 42, 0.15);
         }
 
+        .mobile-toolbar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .mobile-toolbar-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .mobile-panel {
+            padding: 1.25rem;
+        }
+
+        .mobile-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .mobile-table {
+            min-width: 760px;
+        }
+
+        .mobile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        .mobile-button-wide {
+            width: auto;
+        }
+
         /* Custom SweetAlert Emerald Theme */
         .swal2-emerald-popup {
             border-radius: 22px !important;
@@ -502,6 +639,16 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 transform: translateX(0);
             }
 
+            .nav-label {
+                margin-left: 1.2rem;
+                margin-right: 1.2rem;
+            }
+
+            .nav-item {
+                margin-left: 0.65rem;
+                margin-right: 0.65rem;
+            }
+
             .mobile-overlay {
                 position: fixed;
                 inset: 0;
@@ -529,6 +676,38 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 padding: 1rem;
             }
 
+            .mobile-toolbar {
+                align-items: stretch;
+            }
+
+            .mobile-toolbar-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .mobile-toolbar-actions > * {
+                width: 100%;
+            }
+
+            .mobile-panel {
+                padding: 1rem;
+            }
+
+            .mobile-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .mobile-button-wide {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .mobile-table {
+                min-width: 680px;
+            }
+
             .section-mobile-title {
                 display: flex;
                 flex-direction: column;
@@ -539,6 +718,10 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             .dataTables_wrapper .dataTables_paginate {
                 text-align: left !important;
                 justify-content: flex-start;
+            }
+
+            .sidebar-brand {
+                min-height: auto;
             }
         }
 
@@ -569,113 +752,55 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
         <div id="mobileOverlay" class="mobile-overlay md:hidden"></div>
         <!-- Sidebar -->
         <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl hidden md:flex flex-col z-10">
-            <div class="h-24 flex items-center px-6 border-b border-gray-100">
-                <div class="flex items-center gap-3">
-                    <?php if (!empty($sys['logo'])): ?>
-                        <img src="uploads/<?= $sys['logo'] ?>" alt="Logo" class="h-10 w-10 object-contain">
-                    <?php else: ?>
-                        <i class="fas fa-mosque text-2xl text-emerald-600"></i>
-                    <?php endif; ?>
-                    <div>
-                        <h1 class="font-display text-xl font-semibold text-slate-800 leading-tight">
+            <div class="sidebar-brand flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="sidebar-logo">
+                        <?php if (!empty($sys['logo'])): ?>
+                            <img src="uploads/<?= $sys['logo'] ?>" alt="Logo" class="h-9 w-9 object-contain">
+                        <?php else: ?>
+                            <i class="fas fa-mosque text-xl text-emerald-600"></i>
+                        <?php endif; ?>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="font-display text-[1.1rem] font-semibold text-slate-800 leading-tight truncate">
                             <?= $sys['nama_aplikasi'] ?: 'SIKEP' ?>
                         </h1>
-                        <p class="text-xs text-slate-500 mt-1">Dashboard bendahara modern</p>
+                        <p class="text-xs text-slate-500 mt-0.5 leading-4">Dashboard bendahara modern</p>
                     </div>
                 </div>
+                <button id="sidebarCloseButton" class="sidebar-close md:hidden" type="button" aria-label="Tutup menu">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-4">
-                <ul class="space-y-1">
-                    <li>
-                        <a href="index.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'dashboard' ? 'active' : '' ?>">
-                            <i class="fas fa-home w-6"></i>
-                            <span class="font-medium">Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="santri.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'santri' ? 'active' : '' ?>">
-                            <i class="fas fa-user-graduate w-6"></i>
-                            <span class="font-medium">Data Santri</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="alumni.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'alumni' ? 'active' : '' ?>">
-                            <i class="fas fa-user-graduate w-6"></i>
-                            <span class="font-medium">Data dan Tagihan Alumni</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="tagihan.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'tagihan' ? 'active' : '' ?>">
-                            <i class="fas fa-file-invoice-dollar w-6"></i>
-                            <span class="font-medium">Tagihan Santri</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="transaksi.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'transaksi' ? 'active' : '' ?>">
-                            <i class="fas fa-exchange-alt w-6"></i>
-                            <span class="font-medium">Transaksi Kas</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="laporan.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'laporan' ? 'active' : '' ?>">
-                            <i class="fas fa-file-invoice-dollar w-6"></i>
-                            <span class="font-medium">Laporan</span>
-                        </a>
-                    </li>
-
-                    <?php if ($user_role == 'super_admin'): ?>
-                        <li>
-                            <a href="users.php"
-                                class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'users' ? 'active' : '' ?>">
-                                <i class="fas fa-users-cog w-6"></i>
-                                <span class="font-medium">Manajemen User</span>
-                            </a>
-                        </li>
-                                                <li>
-                            <a href="audit_log.php"
-                                class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'audit' ? 'active' : '' ?>">
-                                <i class="fas fa-history w-6"></i>
-                                <span class="font-medium">Audit Log</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="pengaturan.php"
-                                class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'pengaturan' ? 'active' : '' ?>">
-                                <i class="fas fa-cog w-6"></i>
-                                <span class="font-medium">Pengaturan Web</span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
-                    <li>
-                        <a href="profil.php"
-                            class="nav-item flex items-center gap-3 px-5 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == 'profil' ? 'active' : '' ?>">
-                            <i class="fas fa-user-circle w-6"></i>
-                            <span class="font-medium">Profil Saya</span>
-                        </a>
-                    </li>
-                </ul>
+            <nav class="flex-1 overflow-y-auto py-3">
+                <?php foreach ($nav_groups as $group): ?>
+                    <div class="nav-group">
+                        <div class="nav-label"><?= $group['label'] ?></div>
+                        <ul class="space-y-1">
+                            <?php foreach ($group['items'] as $item): ?>
+                                <li>
+                                    <a href="<?= $item['href'] ?>"
+                                        class="nav-item flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors <?= $section_key == $item['key'] ? 'active' : '' ?>">
+                                        <i class="<?= $item['icon'] ?>"></i>
+                                        <span class="nav-item-text font-medium"><?= $item['text'] ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endforeach; ?>
             </nav>
 
-            <div class="p-4 border-t border-gray-100">
+            <div class="sidebar-footer p-4 border-t border-gray-100">
                 <div class="sidebar-badge rounded-2xl px-4 py-3 mb-3">
                     <div class="text-xs font-semibold uppercase tracking-[0.18em]">Akun Aktif</div>
                     <div class="mt-1 font-semibold text-sm text-slate-800"><?= htmlspecialchars($display_name) ?></div>
+                    <div class="text-[11px] uppercase tracking-[0.18em] text-slate-500 mt-1"><?= str_replace('_', ' ', $user_role) ?></div>
                 </div>
                 <a href="logout.php?csrf_token=<?= $_SESSION['csrf_token'] ?>"
-                    class="logout-link flex items-center px-6 py-3 text-red-500 hover:bg-red-50 rounded-2xl transition-colors">
-                    <i class="fas fa-sign-out-alt w-6"></i>
+                    class="logout-link flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-2xl transition-colors">
+                    <i class="fas fa-sign-out-alt"></i>
                     <span class="font-medium">Logout</span>
                 </a>
             </div>

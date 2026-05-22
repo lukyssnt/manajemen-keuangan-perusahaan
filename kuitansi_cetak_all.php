@@ -14,8 +14,19 @@ $q_santri = "SELECT s.*, u.nama_unit
 $res_santri = mysqli_query($koneksi, $q_santri);
 $santri = mysqli_fetch_assoc($res_santri);
 
+// Resolve available date column on tagihan table
+$tagihan_date_field = null;
+foreach (['tanggal_dibuat', 'created_at', 'tanggal'] as $candidate) {
+    $check_col = mysqli_query($koneksi, "SHOW COLUMNS FROM tagihan LIKE '$candidate'");
+    if ($check_col && mysqli_num_rows($check_col) > 0) {
+        $tagihan_date_field = $candidate;
+        break;
+    }
+}
+$order_by_tagihan = $tagihan_date_field ? "$tagihan_date_field DESC" : "id DESC";
+
 // Fetch All Bills
-$q_bills = "SELECT * FROM tagihan WHERE id_santri = '$id_santri' ORDER BY tanggal_dibuat DESC";
+$q_bills = "SELECT * FROM tagihan WHERE id_santri = '$id_santri' ORDER BY $order_by_tagihan";
 $res_bills = mysqli_query($koneksi, $q_bills);
 
 // Summary
@@ -87,11 +98,15 @@ $summary = mysqli_fetch_assoc($res_summary);
         $no = 1;
         while($b = mysqli_fetch_assoc($res_bills)): 
         $sisa = $b['nominal'] - $b['terbayar'];
+        $tanggal_tagihan = '-';
+        if ($tagihan_date_field && !empty($b[$tagihan_date_field])) {
+            $tanggal_tagihan = date('d/m/Y', strtotime($b[$tagihan_date_field]));
+        }
         ?>
         <tr>
             <td><?= $no++ ?></td>
             <td><?= $b['judul'] ?></td>
-            <td><?= date('d/m/Y', strtotime($b['tanggal_dibuat'])) ?></td>
+            <td><?= $tanggal_tagihan ?></td>
             <td align="right">Rp <?= number_format($b['nominal'], 0, ',', '.') ?></td>
             <td align="right">Rp <?= number_format($b['terbayar'], 0, ',', '.') ?></td>
             <td align="right">Rp <?= number_format($sisa, 0, ',', '.') ?></td>

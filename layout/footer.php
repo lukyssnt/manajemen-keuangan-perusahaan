@@ -77,6 +77,7 @@
     const mobileMenuButton = document.getElementById('mobileMenuButton');
     const appSidebar = document.getElementById('appSidebar');
     const mobileOverlay = document.getElementById('mobileOverlay');
+    const sidebarCloseButton = document.getElementById('sidebarCloseButton');
 
     function toggleSidebar(forceOpen = null) {
         if (!appSidebar || !mobileOverlay) return;
@@ -92,6 +93,10 @@
 
     if (mobileOverlay) {
         mobileOverlay.addEventListener('click', () => toggleSidebar(false));
+    }
+
+    if (sidebarCloseButton) {
+        sidebarCloseButton.addEventListener('click', () => toggleSidebar(false));
     }
 
     document.querySelectorAll('#appSidebar a').forEach((link) => {

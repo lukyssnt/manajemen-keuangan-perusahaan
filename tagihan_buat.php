@@ -75,7 +75,7 @@ if ($role != 'super_admin') {
         <h2 class="text-3xl font-bold text-gray-800">Buat Tagihan Baru</h2>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
         <form action="" method="post">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
@@ -139,10 +139,10 @@ if ($role != 'super_admin') {
                     <div class="max-h-60 overflow-y-auto bg-white border rounded-lg p-2" id="santriList">
                         <?php while ($r = mysqli_fetch_assoc($q_santri)): ?>
                             <div
-                                class="flex items-center gap-3 p-2 hover:bg-emerald-50 rounded transition-colors santri-item">
+                                class="flex items-start gap-3 p-2 hover:bg-emerald-50 rounded transition-colors santri-item">
                                 <input type="checkbox" name="id_santri[]" value="<?= $r['id'] ?>"
-                                    class="santri-check rounded text-emerald-600 focus:ring-emerald-500 h-4 w-4">
-                                <div>
+                                    class="santri-check rounded text-emerald-600 focus:ring-emerald-500 h-4 w-4 mt-1">
+                                <div class="min-w-0">
                                     <div class="text-sm font-medium text-gray-800 santri-name">
                                         <?= $row['nama_unit'] ?? '' ?>     <?= $r['nama'] ?>
                                     </div>
@@ -154,9 +154,9 @@ if ($role != 'super_admin') {
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3">
+            <div class="flex flex-col-reverse md:flex-row justify-end gap-3">
                 <button type="submit" name="submit"
-                    class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-colors">Buat
+                    class="mobile-button-wide px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md transition-colors">Buat
                     Tagihan</button>
             </div>
         </form>
