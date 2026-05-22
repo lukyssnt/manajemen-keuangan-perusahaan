@@ -331,6 +331,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
             backdrop-filter: blur(22px);
             border-right: 1px solid rgba(226, 232, 240, 0.85);
             box-shadow: 20px 0 50px -42px rgba(15, 23, 42, 0.22);
+            flex-shrink: 0;
         }
 
         .sidebar-brand {
@@ -670,10 +671,19 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
                 padding-right: 1rem;
                 height: auto;
                 min-height: 5rem;
+                gap: 0.75rem;
             }
 
             main {
                 padding: 1rem;
+            }
+
+            .topbar-shell .ml-auto {
+                margin-left: 0 !important;
+            }
+
+            .topbar-shell > .flex.items-center.gap-4 {
+                gap: 0.75rem;
             }
 
             .mobile-toolbar {
@@ -710,7 +720,29 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
 
             .section-mobile-title {
                 display: flex;
-                flex-direction: column;
+                flex: 1;
+                min-width: 0;
+                align-items: flex-start;
+            }
+
+            .section-mobile-title > div:last-child {
+                min-width: 0;
+            }
+
+            .section-mobile-title .font-display {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .topbar-shell .text-right.hidden.sm\\:block {
+                display: none;
+            }
+
+            .topbar-shell a[href="profil.php"] {
+                height: 2.75rem;
+                width: 2.75rem;
+                border-radius: 1rem;
             }
 
             .dataTables_wrapper .dataTables_filter,
@@ -751,7 +783,7 @@ $display_name = $u_info['nama'] ?: $_SESSION['username'];
     <div class="flex h-screen overflow-hidden">
         <div id="mobileOverlay" class="mobile-overlay md:hidden"></div>
         <!-- Sidebar -->
-        <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl hidden md:flex flex-col z-10">
+        <aside id="appSidebar" class="sidebar-shell mobile-drawer w-64 shadow-xl flex flex-col z-10" aria-hidden="true">
             <div class="sidebar-brand flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div class="flex items-center gap-3 min-w-0">
                     <div class="sidebar-logo">

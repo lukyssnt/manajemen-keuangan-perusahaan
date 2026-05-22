@@ -53,27 +53,27 @@ $result_recent = mysqli_query($koneksi, $query_recent);
 <div class="mb-8 animate-fade-in-up">
     <div class="bg-white/95 rounded-[28px] border border-white/80 shadow-soft overflow-hidden relative">
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_left,rgba(45,212,191,0.12),transparent_24%)] pointer-events-none"></div>
-        <div class="relative p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+        <div class="relative p-5 md:p-8 lg:p-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 md:gap-8">
             <div class="max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold uppercase tracking-[0.22em] border border-emerald-100 mb-5">
+                <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-emerald-50 text-emerald-700 text-[11px] md:text-xs font-semibold uppercase tracking-[0.22em] border border-emerald-100 mb-4 md:mb-5">
                     <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
                     Financial Overview
                 </div>
-                <h2 class="font-display text-3xl md:text-4xl text-slate-900 leading-tight">Selamat Datang, <?= $display_name ?>!</h2>
+                <h2 class="font-display text-[2rem] leading-[1.12] md:text-4xl text-slate-900">Selamat Datang, <?= $display_name ?>!</h2>
                 <p class="text-slate-500 mt-3 text-sm md:text-base leading-7">Ringkasan keuangan <?= $sys['nama_aplikasi'] ?: 'pesantren' ?> disajikan dalam tampilan yang lebih lega, bersih, dan nyaman dipakai setiap hari.</p>
-                <div class="mt-6 flex flex-wrap gap-3">
-                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2">
+                <div class="mt-5 md:mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2 justify-center sm:justify-start">
                         <i class="far fa-calendar-alt text-emerald-600"></i>
                         <?= date('F Y') ?>
                     </div>
-                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2">
+                    <div class="ghost-button px-4 py-3 text-sm font-medium inline-flex items-center gap-2 justify-center sm:justify-start">
                         <i class="fas fa-shield-heart text-teal-600"></i>
                         Monitoring kas realtime
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 min-w-full sm:min-w-[340px] lg:min-w-[380px] lg:max-w-[420px]">
+            <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4 w-full sm:min-w-[340px] lg:min-w-[380px] lg:max-w-[420px]">
                 <div class="rounded-[24px] bg-slate-900 text-white p-5 shadow-panel">
                     <div class="text-xs uppercase tracking-[0.2em] text-white/60">Saldo Saat Ini</div>
                     <div class="mt-3 text-2xl font-display font-semibold">Rp <?= number_format($total_saldo, 0, ',', '.') ?></div>
